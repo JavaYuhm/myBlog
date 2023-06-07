@@ -1,0 +1,41 @@
+spring:
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    defer-datasource-initialization: true
+  # 데이터 소스 설정
+  datasource:
+    url: jdbc:mariadb://localhost:3306/myblog
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: root
+    password: 1234
+    hikari:
+      pool-name: jpa-hikari-pool
+      maximum-pool-size: 5
+      jdbc-url: ${spring.datasource.url}
+      username: ${spring.datasource.username}
+      password: ${spring.datasource.password}
+      driver-class-name: ${spring.datasource.driver-class-name}
+      data-source-properties:
+        rewriteBatchedStatements: true
+  h2:
+    console:
+      enabled: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: '12212023320-irr3h1g2bnct98rj8ecfgt7ue2imgvv7.apps.googleusercontent.com'
+            clientSecret: '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'
+            scope:
+              - email
+              - profile
+jwt:
+  issuer: jwtToken
+  secret_key: 8sknjlO3NPTBqo319DHLNqsQAfRJEdKsETOds
