@@ -124,4 +124,44 @@ class BlogApiControllerTest {
 
     }
 
+
+    @DisplayName("updateArticle : 블로그 글 수정")
+    @Test
+    public void updateArticle() throws Exception{
+
+        final String url = "/api/articles/{id}";
+        final String title = "title";
+        final String content = "content";
+
+        final String updateTitle = "title1";
+        final String updateContent = "content1";
+
+
+        Article article = Article.builder()
+                .title(title)
+                .content(content)
+                .build();
+        Article savedArticle =  blogRepository.save(article);
+
+        Article updateArticle = Article.builder()
+                .title(updateTitle)
+                .content(updateContent)
+                        .build();
+
+        final String requestBody = objectMapper.writeValueAsString(updateArticle);
+
+
+        mockMvc.perform(
+                put(url, savedArticle.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody)
+        ).andExpect(status().isOk());
+
+        Article compareArticle = blogRepository.findById(savedArticle.getId()).orElseThrow(()-> new RuntimeException("ID를 찾을 수 없음."));
+        assertThat(compareArticle.getTitle()).isEqualTo(updateTitle);
+        assertThat(compareArticle.getContent()).isEqualTo(updateContent);
+
+
+    }
+
 }
