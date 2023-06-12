@@ -39,4 +39,8 @@ public class BlogService {
 
         return article;
     }
+
+    public Article findById(Long id){
+        return blogRepository.findById(id).orElseThrow(()-> new RuntimeException("ID를 찾을 수 없음"));
+    }
 }

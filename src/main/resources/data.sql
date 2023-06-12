@@ -1,3 +1,3 @@
-INSERT INTO article (title, content) value ('title 1', 'content1')
-INSERT INTO article (title, content) value ('title 2', 'content2')
-INSERT INTO article (title, content) value ('title 3', 'content3')
+INSERT INTO article (title, content, created_at, updated_at) VALUES ('제목1', '내용1', NOW(), NOW())
+INSERT INTO article (title, content, created_at, updated_at) VALUES ('제목2', '내용2', NOW(), NOW())
+INSERT INTO article (title, content, created_at, updated_at) VALUES ('제목3', '내용3', NOW(), NOW())
