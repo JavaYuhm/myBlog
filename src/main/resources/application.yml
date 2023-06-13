@@ -21,3 +21,6 @@ spring:
     init:
       mode: always
 
+jwt:
+  issuer: yhmJwtToken
+  secret_key: 1233j23j23hjj4kbknzdfdsfkaadfjdsf
