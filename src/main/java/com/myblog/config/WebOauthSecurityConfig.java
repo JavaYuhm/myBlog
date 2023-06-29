@@ -1,6 +1,7 @@
 package com.myblog.config;
 
 import com.myblog.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.myblog.config.oauth.OAuth2SuccessHandler;
 import com.myblog.repository.RefreshTokenRepository;
 import com.myblog.service.RefreshTokenService;
 import com.myblog.service.UserDetailService;
@@ -55,7 +56,7 @@ public class WebOauthSecurityConfig {
                 .authorizationEndpoint()
                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                 .and()
-                .successHandler(oAuth2SucessHandler())
+                .successHandler(oAuth2SuccessHandler())
                 .userInfoEndpoint()
                 .userService(oAuth2UserCustomService);
 
@@ -67,8 +68,8 @@ public class WebOauthSecurityConfig {
     }
 
     @Bean
-    public OAuth2SucessHandler oAuth2SucessHandler(){
-        return new OAuth2SucessHandler(tokenProvider, refreshTokenRepository, oAuth2AuthorizationRequestBasedOnCookieRepository(),userService);
+    public OAuth2SuccessHandler oAuth2SuccessHandler(){
+        return new OAuth2SuccessHandler(tokenProvider, refreshTokenRepository, oAuth2AuthorizationRequestBasedOnCookieRepository(),userService);
     }
 
     @Bean
