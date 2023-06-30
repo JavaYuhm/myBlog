@@ -3,8 +3,6 @@ package com.myblog.config;
 import com.myblog.config.oauth.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.myblog.config.oauth.OAuth2SuccessHandler;
 import com.myblog.repository.RefreshTokenRepository;
-import com.myblog.service.RefreshTokenService;
-import com.myblog.service.UserDetailService;
 import com.myblog.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
