@@ -2,8 +2,10 @@ package com.myblog.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myblog.domain.Article;
+import com.myblog.domain.User;
 import com.myblog.dto.request.ArticleRequest;
 import com.myblog.repository.BlogRepository;
+import com.myblog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,10 +42,23 @@ class BlogApiControllerTest {
     @Autowired
     BlogRepository blogRepository;
 
+    @Autowired
+    UserRepository userRepository;
+    User user;
+
     @BeforeEach
     public void mockMvcSetup(){
         this.mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
         blogRepository.deleteAll();
+    }
+
+    @BeforeEach
+    public void setSecurityContext(){
+        userRepository.deleteAll();
+        user = userRepository.save(User.builder()
+                        .email("user@gmail.com")
+                        .password("test")
+                .build());
     }
 
     @DisplayName("addArticle : 블로그 글 추가")
