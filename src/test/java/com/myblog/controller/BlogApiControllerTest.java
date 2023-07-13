@@ -9,15 +9,20 @@ import com.myblog.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.security.Principal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,6 +64,9 @@ class BlogApiControllerTest {
                         .email("user@gmail.com")
                         .password("test")
                 .build());
+
+        SecurityContext context1 = SecurityContextHolder.getContext();
+        context1.setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
     }
 
     @DisplayName("addArticle : 블로그 글 추가")
@@ -76,10 +84,14 @@ class BlogApiControllerTest {
                 .build();
 
         final String requestBody = objectMapper.writeValueAsString(articleRequest);
+        Principal principal = Mockito.mock(Principal.class);
+        Mockito.when(principal.getName()).thenReturn("username");
 
+        //when
         ResultActions result = mockMvc.perform(
                 post(url)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .principal(principal)
                         .content(requestBody));
 
         result.andExpect(status().isCreated());
@@ -97,21 +109,19 @@ class BlogApiControllerTest {
     public void findAllArticle() throws Exception{
 
         final String url = "/api/articles";
-        final String title = "title";
-        final String content = "content";
 
-        blogRepository.save(Article.builder()
-                        .title(title)
-                        .content(content)
-                .build());
+
+        Article savedArticle = createDefalutArticle();
+
+        blogRepository.save(savedArticle);
 
         final ResultActions result = mockMvc.perform(
                 get(url)
                         .accept(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].content").value(content))
-                .andExpect(jsonPath("$[0].title").value(title));
+                .andExpect(jsonPath("$[0].content").value(savedArticle.getContent()))
+                .andExpect(jsonPath("$[0].title").value(savedArticle.getTitle()));
 
     }
 
@@ -123,12 +133,7 @@ class BlogApiControllerTest {
         final String title = "title";
         final String content = "content";
 
-        Article article = Article.builder()
-                .title(title)
-                .content(content)
-                .build();
-        Article savedArticle =  blogRepository.save(article);
-
+        Article savedArticle = createDefalutArticle();
 
         mockMvc.perform(
                 delete(url, savedArticle.getId())
@@ -147,16 +152,12 @@ class BlogApiControllerTest {
         final String url = "/api/articles/{id}";
         final String title = "title";
         final String content = "content";
+        Article savedArticle = createDefalutArticle();
+
 
         final String updateTitle = "title1";
         final String updateContent = "content1";
 
-
-        Article article = Article.builder()
-                .title(title)
-                .content(content)
-                .build();
-        Article savedArticle =  blogRepository.save(article);
 
         Article updateArticle = Article.builder()
                 .title(updateTitle)
@@ -179,4 +180,12 @@ class BlogApiControllerTest {
 
     }
 
+
+    private Article createDefalutArticle(){
+        return blogRepository.save(Article.builder()
+                        .title("title")
+                        .author(user.getUsername())
+                        .content("content")
+                .build());
+    }
 }
